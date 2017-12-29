@@ -27,6 +27,8 @@ class S2GD(object):
         self.dimension = data_dim
         self.x = np.copy(x0)
 
+        self.follow_loss = list()
+
 
     def draw_t(self):
         """ return randomly a integer value between 1 and m with proba defined in self.proba for each value"""
@@ -39,14 +41,20 @@ class S2GD(object):
                 if self.intervals[t - 1] <= u and u <= self.intervals[t]:
                     return t + 1
 
+    def calculate_loss(self):
+        return sum([self.f[i](self.x) for i in range(self.n)])
+
     def algorithm(self, horizon):
         for j in range(horizon):
             self.g = 1./float(self.n)* np.sum(np.asarray([self.f_der[i](self.x) for i in range(self.n)]), axis = 0)
+
             self.y = np.copy(self.x)
             T = self.draw_t()
             for t in range(T):
                 i = np.random.choice(self.n)
                 self.y = self.y -self.h*(self.g + self.f_der[i](self.y) - self.f_der[i](self.x))
+
             self.x = np.copy(self.y)
+            self.follow_loss.append(self.calculate_loss())
         return self.x
 
