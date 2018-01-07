@@ -14,18 +14,18 @@ def otherquadra(x):
 def deriv1(x):
     x0 = np.asscalar(x[0])
     x1 = np.asscalar(x[1])
-    print x0,x1
+    print(x0,x1)
     return np.asarray([[2*x0], [0.]])
 
 def deriv2(x):
 
     x0 = np.asscalar(x[0])
     x1 = np.asscalar(x[1])
-    print x0, x1
+    print(x0, x1)
     return np.asarray([[0.], [4.*(x1 - 1.)]])
 
 # Creation of the functions and gradient we are going to use:
-print "start creation of function"
+print("start creation of function")
 f = list()
 f_der = list()
 
@@ -47,4 +47,4 @@ final_x = algo1.algorithm(100)
 plt.plot(algo1.follow_loss)
 plt.show()
 
-print algo1.x
+print(algo1.x)

@@ -1,6 +1,4 @@
 import numpy as np
-import math
-import random as rd
 
 
 class S2GD(object):
@@ -27,36 +25,42 @@ class S2GD(object):
         self.dimension = data_dim
         self.x = np.copy(x0)
 
+        self.count_grad = 0
         self.follow_loss = list()
 
 
     def draw_t(self):
         """ return randomly a integer value between 1 and m with proba defined in self.proba for each value"""
-        u = rd.random()
+        u = np.random.uniform()
         for t in range(self.m):
-            if t == 0:
-                if 0. <= u and u <= self.intervals[t]:
-                    return t + 1
-            else:
-                if self.intervals[t - 1] <= u and u <= self.intervals[t]:
-                    return t + 1
+            if  u <= self.intervals[t]:
+                return t + 1
 
-    def calculate_loss(self):
-        return sum([self.f[i](self.x) for i in range(self.n)])
+        return m
+
+    def calculate_loss(self, x):
+        return sum(self.f[i](x) for i in range(self.n)) / self.n
 
     def algorithm(self, horizon):
+        self.follow_loss.append(
+                (self.count_grad, self.calculate_loss(self.x))
+        )
         for j in range(horizon):
             if j%10==0:
-                print "############# step ",j
+                print("############# step ",j)
             self.g = 1./float(self.n)* np.sum(np.asarray([self.f_der[i](self.x) for i in range(self.n)]), axis = 0)
+            self.count_grad += self.n
 
             self.y = np.copy(self.x)
             T = self.draw_t()
             for t in range(T):
-                i = np.random.choice(self.n)
-                self.y = self.y -self.h*(self.g + self.f_der[i](self.y) - self.f_der[i](self.x))
+                i = np.random.choice(range(self.n))
+                self.y = self.y - self.h*(self.g + self.f_der[i](self.y) - self.f_der[i](self.x))
+                self.count_grad += 2
 
+            self.follow_loss.append(
+                (self.count_grad, self.calculate_loss(self.y))
+            )
             self.x = np.copy(self.y)
-            self.follow_loss.append(self.calculate_loss())
-        return self.x
 
+        return self.x
