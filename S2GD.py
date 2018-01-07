@@ -46,6 +46,8 @@ class S2GD(object):
 
     def algorithm(self, horizon):
         for j in range(horizon):
+            if j%10==0:
+                print "############# step ",j
             self.g = 1./float(self.n)* np.sum(np.asarray([self.f_der[i](self.x) for i in range(self.n)]), axis = 0)
 
             self.y = np.copy(self.x)
