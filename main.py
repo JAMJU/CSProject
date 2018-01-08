@@ -128,7 +128,6 @@ def partial_loss_grad(lamb, label, data):
         return logistic_loss_grad(lamb, label, data, x)
     return func
 
-print("start creation of function")
 f = list()
 f_der = list()
 for i in range(new_label.shape[0]):
@@ -140,17 +139,22 @@ for i in range(new_label.shape[0]):
 x0 = np.asarray([[(1. - 2.*np.random.uniform())] for j in range(dimension)],  dtype = np.float) / 1000
 
 # Creation of the algo S2GD
-# change lower bound : maybe that's the pb !
-algo1 = S2GD( max_number_stoch = 100, stepsize = 0.001, lower_bound = 0., functions = f, derivates = f_der,
+print("parameters nu = 0")
+h = 10. ** (-6)
+n_epochs = 11
+m = 17100
+algo1 = S2GD( max_number_stoch = m, stepsize = h, lower_bound = 0., functions = f, derivates = f_der,
               data_dim = dimension, x0=x0)
-final_x = algo1.algorithm(2000)
+
+print("algo")
+final_x = algo1.algorithm(n_epochs)
 
 
 def partial(list_, i):
     return [elem[i] for elem in list_]
 
 # We plot the evolution of the loss function
-plt.semilogy(partial(algo1.follow_loss, 0), np.asarray(partial(algo1.follow_loss, 1)) - algo1.follow_loss[-1][1])
+plt.semilogy(partial(algo1.follow_loss, 0)[0:-1], np.asarray(partial(algo1.follow_loss, 1)[0:-1]) - algo1.follow_loss[-1][1], 'ko-')
 plt.show()
 
 result_label_f = [logistic(new_data[i].reshape(dimension, 1), algo1.x) for i in range(new_data.shape[0])]
@@ -160,4 +164,4 @@ print(result_label[0:10])
 print(new_label[0:10])
 accuracy = float(sum([int(r == orig) for r, orig in zip(result_label, new_label)]))/float(new_data.shape[0])
 print("ACCURACY", accuracy)
-print("COUNT", count)
+print("COUNT", algo1.count_grad)
