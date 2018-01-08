@@ -139,11 +139,20 @@ for i in range(new_label.shape[0]):
 x0 = np.asarray([[(1. - 2.*np.random.uniform())] for j in range(dimension)],  dtype = np.float) / 1000
 
 # Creation of the algo S2GD
-print("parameters nu = 0")
+# print("parameters nu = 0")
+# h = 10. ** (-6)
+# n_epochs = 11
+# m = 17100
+# algo1 = S2GD( max_number_stoch = m, stepsize = h, lower_bound = 0., functions = f, derivates = f_der,
+#               data_dim = dimension, x0=x0)
+
+print("parameters nu = mu")
 h = 10. ** (-6)
+K = 320
+mu = 14. * (10.**(-6)) / K
 n_epochs = 11
-m = 17100
-algo1 = S2GD( max_number_stoch = m, stepsize = h, lower_bound = 0., functions = f, derivates = f_der,
+m = 11700
+algo1 = S2GD( max_number_stoch = m, stepsize = h, lower_bound = mu, functions = f, derivates = f_der,
               data_dim = dimension, x0=x0)
 
 print("algo")
